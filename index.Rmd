@@ -1,0 +1,15 @@
+---
+title: "Visual Analytics"
+description: |
+  This websit consists of a collection of works done for ISSS608 Visual Analytics and Applications!
+site: distill::distill_website
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Learn more about creating websites with Distill at:
+# https://rstudio.github.io/distill/website.html
+
+```
+
