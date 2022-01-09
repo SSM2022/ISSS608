@@ -11,5 +11,11 @@ navbar:
       href: about.html
   left:
     - text: "Take-home Exercise"
+      menu:
+        - text: "Take-home Exercise 1"
+          href: "TH_EX/TH_EX01/TH_EX01.html"
     - text: "DataViz Makeover"
+      menu:
+        - text: "DataViz Makeover 1"
+          href: "DataViz01.html"   
 output: distill::distill_article
