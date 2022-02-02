@@ -144,7 +144,7 @@ Next, [**transition_time()**](https://www.rdocumentation.org/packages/gganimate/
 
 The full code chunk and output are shown below.
 
-```{r, fig.width=6, fig.height = 5}
+```{r, fig.width=8, fig.height = 5}
 
 ggplot(data=dfgrouped_selected,
        aes(x = AG, y = Pop1, fill = Sex)) +
