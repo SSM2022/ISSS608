@@ -320,7 +320,7 @@ After parsing the worksheet into R, it is a good practice to check the structure
 
 ## Data Wrangling
 
-### SORT DATA TABLE
+### Change the age group name for sorting 
 
 We need to sort the values alphanumerically by the age group. The following code chunk changes age group “5_to_9” to “05_to_09” to allow for ggplot default labels to arrange the data according to age group. If not, “5_to_9” would be placed among the 50s group data.
 
