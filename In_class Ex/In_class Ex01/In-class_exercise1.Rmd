@@ -1,0 +1,294 @@
+---
+title: "In-class_Ex01 Building Elegant Graphics with ggplot2"
+description: |
+
+author:
+  - name: Sun Shengmei
+    url: https://www.linkedin.com/in/shengmei-sun-9b262656/?originalSubdomain=sg
+    affiliation: SMU MITB
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+# echo = True: to display the code on the webpage
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.retina = 3)
+```
+
+# To install packages: 'tidyverse','ggrepel'
+```{r}
+packages = c('tidyverse','ggrepel')
+for(p in packages){
+   if(!require(p, character.only = T)){
+     install.packages(p)
+   }
+   library(p, character.only = T)
+}
+```
+
+# To import data using read_csv of readr package
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) +
+  geom_bar()
+```
+# "scale_y_continuous" is to turn off the y-axis
+```{r}
+ggplot(data=exam_data,
+       aes(x=MATHS)) +
+  geom_dotplot(binwidth= 2.5,
+               dotsize = 0.5) +
+  scale_y_continuous(NULL,
+                     breaks = NULL)
+```
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) +
+  geom_histogram()
+
+```
+# "Fill" inside the geom_histogram, give the same color to all the bars. "color" is for the border
+```{r}
+ggplot(data=exam_data,
+       aes(x=MATHS)) +
+  geom_histogram(bins=20,
+                 color="black",
+                 fill="light blue") +
+  ggtitle("Distribution of Maths scores")
+```
+# Staked histogram. "Color" here is for the outline of the bar. "fill" inside the aes gives 2 colors by gender.
+```{r}
+ggplot(data=exam_data,
+       aes(x=MATHS, 
+           fill= GENDER)) +
+  geom_histogram(bins=20,
+                 color="grey30")
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x=MATHS,
+           color=GENDER)) +
+  geom_density()
+```
+# "alpha" is to define the tickness of the line. Boxplot shows median VS lower 25% VS upper 25%.
+```{r}
+ggplot(data=exam_data,
+       aes(y=MATHS, 
+           x= GENDER)) +
+  geom_violin(fill="lightblue")+
+  geom_boxplot(alpha=0.5)
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS, y=ENGLISH)) +
+  geom_point()
+```
+# To add in summary statistics/mean method 1
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS, x= GENDER)) +
+  geom_boxplot(alpha=0.5) +
+  stat_summary(geom = "point",
+               fun.y = "mean",
+               color ="red",
+               size=4)
+```
+# To add in summary statistics/mean method 2
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS, x= GENDER)) +
+  geom_boxplot(alpha=0.5) +
+  geom_point(stat = "summary",
+             fun.y= "mean",
+             color ="red",
+             size=4)
+
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS, y=ENGLISH)) +
+  geom_point() +
+  geom_smooth(method=lm,
+              size = 0.5)
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) +
+  geom_histogram(bins=20)+
+  facet_wrap(~CLASS)
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) +
+  geom_histogram(bins=20)+
+  facet_grid(~CLASS)
+```
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS, x=CLASS)) +
+  geom_boxplot()+
+  facet_grid(~GENDER)
+```
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS, x=CLASS)) +
+  geom_boxplot()+
+  facet_grid(GENDER~.)
+```
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS, x=GENDER)) +
+  geom_boxplot()+
+  facet_grid(GENDER~CLASS)
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) +
+  geom_bar() +
+  coord_flip()
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x=MATHS, y=ENGLISH)) +
+  geom_point() +
+  geom_smooth(method=lm,
+              size=0.5) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) +
+  geom_bar() +
+  coord_flip()+
+  theme_gray()
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) +
+  geom_bar() +
+  coord_flip()+
+  theme_classic()
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) +
+  geom_bar() +
+  coord_flip()+
+  theme_minimal()
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) +
+  geom_bar() +
+  coord_flip()+
+  theme_minimal()+
+  theme(panel.background = element_rect(fill="lightblue",
+                                       color = "lightblue",
+                                       size=0.5,
+                                       linetype="solid"),
+        panel.grid.major = element_line(size = 0.5, 
+                                        linetype = "solid",
+                                        color = "white"),
+        panel.grid.minor = element_line(size = 0.25, 
+                                        linetype = "solid",
+                                        color = "white"))
+```
+# 不明白这个function怎么work. “geom_text" is used for labelling plots
+# You can modify text alignment with the vjust and hjust aesthetics. These can either be a number between 0 (right/bottom) and 1 (top/left) or a character ("left", "middle", "right", "bottom", "center", "top"). There are two special alignments: "inward" and "outward". Inward always aligns text towards the center, and outward aligns it away from the center.
+```{r}
+ggplot(data=exam_data,
+       aes(x=reorder(RACE, RACE, 
+                     function(x) - length(x)))) +
+  geom_bar()+
+  ylim(0,220)+
+  geom_text(stat="count",
+            aes(label=paste0(..count..,",",
+            round(..count../sum(..count..)*100,
+                  1),"%")),
+            vjust=-1)+
+  xlab("Race")+
+  ylab("No.of\nPupils")+
+  theme(axis.title.y=element_text(angle=0))
+         
+```
+# %>%：to avoid nesting loop? 不明白
+# mutate: add new variables and preserve existing ones
+```{r}
+exam_data %>%
+  mutate(RACE=fct_infreq(RACE)) %>%
+  ggplot(aes(x=RACE)) +
+  geom_bar()+
+  ylim(0,220)+
+  geom_text(stat="count",
+            aes(label=paste0(..count..,",",
+            round(..count../sum(..count..)*100,
+                  1),"%")),
+            vjust=-1)+
+  xlab("Race")+
+  ylab("No.of\nPupils")+
+  theme(axis.title.y=element_text(angle=0))
+```
+# geom_vline: to add reference line
+# na.rm=T: na value will be stripped before computation
+```{r}
+ggplot(data=exam_data,
+       aes(x=MATHS)) +
+  geom_histogram(bins=20,
+                 color="black",
+                 fill="light blue") +
+  geom_vline(aes(xintercept=mean(MATHS,na.rm=T)),
+             color="red",
+             linetype="dashed",
+             size=1)+
+  geom_vline(aes(xintercept=median(MATHS,na.rm=T)),
+             color="grey30",
+             linetype="dashed",
+             size=1)
+```
+# guides(fill=FALSE): no legend. if guides(): there is legend
+```{r}
+d <- exam_data
+d_bg <- d[,-3]
+ggplot(d, aes(x=ENGLISH,
+              fill = GENDER))+
+  geom_histogram(data = d_bg,
+                 fill="grey",
+                 alpha =.5)+
+  geom_histogram(colour="black")+
+  facet_wrap(~GENDER) +
+  guides(fill = FALSE) +
+  theme_bw()
+```
+```{r}
+ggplot(data=exam_data,
+       aes(x=MATHS, y=ENGLISH))+
+  geom_point()+
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))+
+  geom_hline(yintercept=50,
+             linetype="dashed",
+             color="grey60",
+             size=1)+
+  geom_vline(xintercept=50,
+             linetype="dashed",
+             color="grey60",
+             size=1)
+```
+
+
+
+
+
+

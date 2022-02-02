@@ -1,0 +1,54 @@
+---
+title: "In-class_ex02"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Distill is a publication format for scientific and technical writing, native to the web. 
+
+Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+
+
+```{r}
+packages =c('tidyverse','readxl')
+
+for(p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T )
+}
+```
+```{r, echo = TRUE, warning = FALSE, message = FALSE}
+orders <- read_xls("data/Superstore-2021.xls",
+                   sheet = "Orders")
+returns <- read_xls("data/Superstore-2021.xls",
+                    sheet = "Returns")
+```
+
+```{r}
+joined_tab <- left_join(returns, orders,
+                        by = c('Order ID' = 'Order ID')
+                        )
+```
+
+```{r}
+FC_tab <- joined_tab %>%
+  group_by('Sub-Category') %>%
+  summarise('Returns' = count(as.factor('Sub-Category'))) %>%
+  ungroup()
+```
+
+
+
