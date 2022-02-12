@@ -13,11 +13,21 @@ navbar:
     - text: "Take-home Exercise"
       menu:
         - text: "Take-home Exercise 1"
-          href: "TH_Ex/TH_EX01/Take-home-Ex01.html"
+          href: "TH_Ex/TH_EX01/th_ex01"
         - text: "Take-home Exercise 2"
           href: "TH_Ex/TH_EX02/Take-home-Ex02.html"
+        - text: "Take-home Exercise 3"
+          href: "TH_Ex/TH_EX02/Take-home-Ex03.html"
+        - text: "Take-home Exercise 4"
+          href: "TH_Ex/TH_EX02/Take-home-Ex04.html"
+        - text: "Take-home Exercise 5"
+          href: "TH_Ex/TH_EX02/Take-home-Ex05.html"
     - text: "DataViz Makeover"
       menu:
         - text: "DataViz Makeover 1"
           href: "DataViz01.html"   
+        - text: "DataViz Makeover 2"
+          href: "DataViz02.html"  
+    - text: "Visual Analytics Project"
+      href: "Visualanalyticsproject.html"
 output: distill::distill_article
