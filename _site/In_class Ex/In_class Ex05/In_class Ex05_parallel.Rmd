@@ -1,0 +1,137 @@
+---
+title: "Untitled"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.retina = 3)
+```
+
+Distill is a publication format for scientific and technical writing, native to the web. 
+
+Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+
+
+
+
+```{r}
+packages = c('GGally', 'parcoords', 'parallelPlot', 'tidyverse')
+
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+
+```
+```{r}
+wh <- read_csv("data/WHData-2018.csv")
+
+```
+
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12))
+```
+
+
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2, ### region###
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Parallel Coord. Plot of World Happines Attributes")
+```
+```{r}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2, ### region###
+           scale = "globalminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Parallel Coord. Plot of World Happines Attributes")
+```
+```{r, fig.width=15}
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax", 
+           boxplot = TRUE, 
+           title = "Parallel Coord. Plot of World Happines Attributes") +
+  facet_wrap(~ Region)
+```
+
+```{r, fig.width=15}
+parcoords(wh[,7:12])
+```
+
+```{r, fig.width=15}
+parcoords(
+ wh[,7:12],
+ rownames = FALSE,
+ reorderable = T,
+ brushMode = '1D-axes',
+ width = 700,
+ height = 400)
+```
+
+```{r, fig.width=15}
+parcoords(
+ wh[,7:12],
+ rownames = FALSE,
+ alpha = 0.3,
+ alphaOnBrushed = 0.2,
+ reorderable = T,
+ brushMode = '1D-axes', ###
+ width = 700,
+ height = 400)
+```
+
+
+
+```{r, fig.width=15}
+wh <- wh %>%
+  select("Happiness score", c(7:12))
+parallelPlot(wh)
+```
+
+
+
+```{r, fig.width=15}
+parallelPlot(wh,
+             rotateTitle = TRUE)
+```
+
+
+```{r, fig.width=15}
+parallelPlot(wh,
+             continuousCS = "YlOrRd",
+             rotateTitle = TRUE)
+```
+```{r, fig.width=15}
+histoVisibility <- rep(TRUE, ncol(wh))
+parallelPlot(wh,
+             rotateTitle = TRUE,
+             histoVisibility = histoVisibility)
+```
+
+
+
+
+

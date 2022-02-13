@@ -1,0 +1,160 @@
+---
+title: "DataViz Makeover 1"
+description: In this post, we will criticize one original visualisation regarding Singapore labour force participation rate and propose an alternative to address the flaws.
+author:
+  - name: Sun Shengmei
+    url: https://www.linkedin.com/in/shengmei-sun-9b262656/?originalSubdomain=sg
+    affiliation: SMU MITB
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output:
+   distill::distill_article:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.retina = 3)
+
+```
+
+# 1. The Task
+
+The task is to criticize the original data visualization in below Figure 1., suggest the alternative presentation, design the the proposed data visualization using Tableau, describe the step-by-step preparation and interpret the observations revealed by the data visualization prepared. 
+
+![Figure 1. Original Data Visualisation](data/Original_chart.PNG)
+
+The data source of above visualization is Ministry of Manpower, Singapore (MOM). The data are available under the page entitle [Statistical Table: Labour Force](https://stats.mom.gov.sg/Pages/LabourForceTimeSeries.aspx). For the purpose of this Dataviz Makeover exercise, the data on *Resident Labour Force Participation Rate by Age and Sex* was downloaded.
+
+# 2. Critique of Visualisation
+
+## 2.1 Clarity
+
+***(a) Vague graph title:*** The chart title is too brief to convey enough information. Datasheet contains data on Singapore male, female and total labor force participation rate by age group from 1991 to 2021. The title fails to display location information, gender, grouping criteria and time period.
+
+***(b) Incomplete/hidden x-axis labels:*** X axis length is too short to show the full names of all the x-axis labels. For the upper x-axis, "75&O.." and "70&Ov.." are incomplete labels. For the lower x-axis, each section contains the data from 2010 to 2021, but the label only shows year 2015, which is confusing.
+
+***(c) Unclear y-axis title:***  "Lfpr" is not clear to tell the readers what the y-axis represents. There is also no unit displayed.
+
+
+***(d) Disordered age-group legend*** Age-group order in the legend is disordered. It is confusing and difficult for readers to quickly understand the grouping rules. In addition, there is overlapping of age group for "70 & Over" and "75 & Over".
+
+
+***(e) Missing annotation and caption*** There is no annotation highlighting the significant findings. There is also no recognition of the data source.
+
+
+## 2.2 Aesthetic
+
+***(a) Redundant color usage by age group:*** Each column of the chart shows the participation rate by each age group as labelled on the upper x-axis. Legend color by age group looks fancy but doesn't convey any additional information.
+
+***(b) Too few x-axis tick marks:*** For each age group, the visualization contains data from 2010 to 2011. However, there are only 3 tick marks in each age group.
+
+***(c) Improper minor gridline interval*** Vertical minor gridline has uneven interval, which is ugly. There is missing horizontal minor gridline between 2 wide y-axis labels. Overall, both horizontal and vertical minor gridlines fail to provide additional guidance on reading the numbers.
+
+***(d) Repeated x-axis title:*** "Year" label on the x axis are repeated for 14 times in the chart, which is abundant and not beautiful.
+
+***(e) Improper data ink:*** There is data ink on the axes but not in the values of the tick marks.
+
+
+
+# 3. Proposed Design
+
+The initial sketch of proposed design is as follow:
+![](data/0.PNG){width=100%}
+
+## 3.1 Clarity
+
+***(a) Content:*** The proposed design uses more information, including gender. Chart 1 shows a broad view of total age group labor force participation rate evolution with time by gender. Then, it zooms into the differences between different age groups for females and males.
+
+***(b) Title:*** The proposed design has a proper dashboard title with main information on the location, topic and aspect. Each chart title shows the detailed aspect. The first chart title highlights the total age group and the rate evolution with time. The 2nd chart title highlights the age groups. Subtitles of the 2 charts mentioned the insights from each chart.
+
+***(c) X-axis labels:*** All the x-axis labels are visible fully and reflect the underlying data used. Age groups are in ascending orders. Time frame is from year 2010 to 2021.
+
+***(d) Y-axis labels:*** Y-axis title shows the full name of labor force participation rate and the unit (%).
+
+***(e) Legend:*** Legend is easy to read with only 3 categories to indicate female, male and total female&male. 
+
+***(f) Annotation and caption*** Annotation and caption are added to explain the chart information and show the data source. 
+
+## 3.2 Aesthetic
+
+***(a) X-axis labels:***  The proposed design removed the repeated 'Year' labels.
+
+***(b) Tick marks and reference lines:*** The proposed design clearly shows the axis ticks with 'black' color. Adequate tick marks and references lines are added to provide enough guidance to readers. 
+
+***(c) Gridlines:*** There is no uneven split of charts pane from improper grindline interval.
+
+***(d) Data ink:*** Gender text are colored with the same ink as the line and area in the charts. All the titles and headers are bold for better presentation.
+
+***(e) Font Size:*** Different front sizes for dashboard title, chart main title, subtitle, labels marks, annotation and caption are used for the best fit.
+
+
+# 4. Proposed Visualisation on Tableau
+Please view the proposed visualisation on Tableau Public [here](https://public.tableau.com/app/profile/sun.shengmei/viz/DataViz_16446851228940/Dashboard1?publish=yes).
+![](data/Final.PNG){width=100%}
+
+# 5. Step-by-step Preparation
+No.|Step                                                |Action
+---|----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------
+1  |Load the excel file into Tableau Prep Builders. Drag 'mrsd_Res_LFPR_2' worksheet into the main pane for 2 times. Click the check box of 'Use Data Interpreter'. Rename the 1st sheet as 'Data1' and the 2nd sheet as 'Data2'. |![](data/1.PNG){width=100%}
+2  |Remove the data from year 1991-2009 for both 'Data1' and 'Data2' by deselect the check box. |![](data/2.PNG){width=100%}
+3  |Initiate the clean node 'Clean 1' from 'Data1' and 'Clean 1' from 'Data2' by clicking the '+' sign. |![](data/3.PNG){width=100%}
+4  |Under 'Clean 1', Ctrl and select row 'Females', 'Males', and 'Total' in the 'Age(Years)/Sex' field at the same time. Right click and select 'Exclude'. |![](data/4.PNG){width=100%}
+5  |Under 'Clean 1', right click the 'Age(Years)/Sex' field, select 'Create Calculated Field' > 'Custom Calculation'|![](data/5.PNG){width=100%}
+6  |Input formula '{PARTITION [Age (Years) / Sex]: {ORDERBY[Age (Years) / Sex]:ROW_NUMBER()}}', apply and save. A new field 'Calculation1' is created. Change the data type from 'Number' to 'String'. |![](data/6.PNG){width=100%}
+7  |Rename 'Calculation1' to 'Sex' by double clicking the name. Rename '1' to 'F', '2' to 'M', and '3' to 'M&F' by double clicking the name. |![](data/7.PNG){width=100%}
+8  |Rename 'Age(Years)/Sex' to 'Age-group' by double clicking the name. |![](data/8.PNG){width=100%}
+9  |Add a pivot node 'Pivot 1' after 'Clean 1'. |![](data/9.PNG){width=100%}
+10 |Under 'Pivot 1', Ctrl and select year 2010 to 2021. Drag all the selected fields to 'Pivoted Fields'. |![](data/10.PNG){width=100%}
+11 |Rename 'Pivot1 Names' to 'Year' and 'Pivot1 Values' to 'LFPR'. |![](data/11.PNG){width=100%}
+12 |Under 'Clean 2', Ctrl and select all the rows at the same time, except 'Females', 'Males', and 'Total' in the 'Age(Years)/Sex' field. Right click and select 'Exclude'. |![](data/12.PNG){width=100%}
+13 |Under 'Clean 2', repeat the same step of 5 and 6 here to create a new 'Calculation1. Rename 'Calculation1' to 'Age-group'. Rename '1' to 'Total'. Rename 'Age(Years)/Sex' to 'Sex'. Rename 'Females' to 'F', 'Males' to 'M', and 'Total' to 'M&F'. |![](data/13.PNG){width=100%}
+14 |Add a pivot node 'Pivot 2' after 'Clean 2'. Ctrl and select year 2010 to 2021. Drag all the selected fields to 'Pivoted Fields'. Rename 'Pivot1 Names' to 'Year' and 'Pivot1 Values' to 'LFPR'. |![](data/14.PNG){width=100%}
+15 |Drag 'Pivot 2' towards 'Pivot 1' to form a union 'Union 1'. |![](data/15.PNG){width=100%}
+16 |Under 'Union 1', remove field 'Table Names'. For 'Age-group', exclude "70 & Over'. Change 'Year' type from 'String' to 'Date'. Cleaned data frame is shown on the right. |![](data/16.PNG){width=100%}
+17 |Create a Output node 'Output' after 'Union 1’ node and save the output as ‘Singapore LFPR’. |![](data/17.PNG){width=100%}
+18 |Set up a connection on Tableau Desktop to the ‘Singapore LFPR’ hyper’s extract. |![](data/18.PNG){width=100%}
+19 |Create a 'Sheet 0'. Drag 'Age-group' and 'Year' to 'Columns'. Drag 'Lfpr' to 'Rows'. Drag 'Age-group' to 'Filters' and select 'Total'. Drag 'Sex' to 'Color'. |![](data/19.PNG){width=100%}
+20 |Drop " 'Lfpr' to 'Label'. Click 'Label', 'Show mark labels', select 'All' for 'Marks to Label', and change font size to 8. Under 'Text', edit label to add suffix % after the number.|![](data/20.PNG){width=100%}
+21 |Right click the y-axis, and select 'Edit Axis'. Deselect 'Include zero' and change title to ' Labor Force Participation Rate (%)'. |![](data/21.PNG){width=100%}
+22 |Right click the y-axis, and select 'format'. Change 'Numbers" to 'Number(custom)' with suffix %' . |![](data/22.PNG){width=100%}
+23 |Hide 'Age-group / Year' by right clicking it and select 'Hide Field Names for Columns'. Right click 'Total', select 'Edit Alias' and change it to 'Age 15 and above'. Bold the age-group, Y-axis and X-axis values by clicking 'Format', 'Font', 'Header', and bold 'B'. Change the 'Axis Ticks' color to black in 'Format Lines'. |![](data/23.PNG){width=100%}
+24 |Add in Title and subtitle. |![](data/24.PNG){width=100%}
+25 |Create a 'Sheet 1'. Drag 'Age-group' and 'Year' into 'Columns'. Drag 'Lfpr' into rows. Change 'Year' type to 'Continuous'.|![](data/25.PNG){width=100%}
+26 |Drag 'Sex' to 'Filters' and select 'F', and 'M'.|![](data/26.PNG){width=100%}
+27 |Drag 'Sex' to 'Color' under 'Marks'. Click 'Color', 'Edit Colors', and change the color of 'F' to orange and the color of 'M' to blue. |![](data/27.PNG){width=100%}
+28 |Drag 'Age-group' to 'Filters' and deselect 'Total'. Change graph type to 'Area' under 'Marks'. |![](data/28.PNG){width=100%}
+29 |Click 'Analysis', 'Stack Marks', and 'Off'. |![](data/29.PNG){width=100%}
+30 |Under ‘Analysis’, select ‘Create Calculated Field’ to create a new variable called ‘Smaller%’ to select the minimum ‘LFPR’ irrespective of ‘Sex’ based on each time period.|![](data/30.PNG){width=100%}
+31 |Drag ‘Smaller%’ variable onto the ‘Lfpr’ axis to create a ‘combined axis’.|![](data/31.PNG){width=100%}
+32 |Drag ‘Measure Names’ from ‘Rows’ shelf to ‘Detail’ under ‘Marks’. Then click on the ‘Detail’ icon next to ‘Measure Names’ and change it to ‘Color’. |![](data/32.PNG){width=100%}
+33 |Click on ‘Colors’ under ‘Marks’ and edit the colors of the variables with ‘Smaller%’ to white. Change opacity to 100%.|![](data/33.PNG){width=100%}
+34 |Drag ‘Lfpr’ to the secondary axis on the chart. There will be a new section 'Sum(Lfpr)' appearing under ‘Marks’. Change the chart type to ‘Line’ under the dropdown and remove ‘Measure Names’. Remove the secondary axis header. |![](data/34.PNG){width=100%}
+35 |At the bottom x-axis, right click and select 'Edit Axis'. In 'General', change the range to fixed, starting from 2010 and ending at 2021. Delete the 'Title'. In 'Tick Marks', change the major tick marks to fixed, starting from 2010 and with tick interval '11'. Change the minor tick marks to be fixed as well, starting from 2010 and with tick interval '1'. |![](data/35.PNG){width=100%}
+36 |Add in reference lines from year 2011 to 2020. Set value to be constant, no label, dotted line with grey color. |![](data/36.PNG){width=100%}
+37 |Right click the y-axis, and select 'Edit Axis'. Under scale, change the numbers to be integer with no decimal points and suffix with %. Double click the y-axis and change the y-axis title to 'Labor Force Participation Rate (%). |![](data/37.PNG){width=100%}
+38 |Bold the age-group, Y-axis and X-axis values. Change the 'Axis Ticks' color to black in 'Format Lines'. Add a title and subtitle to the chart.|![](data/38.PNG){width=100%}
+39 |Add annotation to points whereby there are interesting insights. |![](data/39.PNG){width=100%}
+40|Edit tooltip to show the proper category name. Change 'Year of Year' to 'Year'. Change 'Measure Names' to 'Lfpr (%)'. |![](data/40.PNG){width=100%}  
+41 | Create a new dashboard 'Dashboard 1', drag 'Sheet 0' and 'Sheet 1' into the pane. Change the legend to 'floating' to save space. Click 'Show dashboard title'. Edit dashboard title and chart title to show no repeating information and insights. |![](data/41.PNG){width=100%}
+42 | Add in footnote and data source. |![](data/42.PNG){width=100%}
+43 | Adjust the size of charts, dashboard, and annotation area for better presentation. Click 'Server', 'Tableau Public' and 'Save to Tableau Public' for publishing|![](data/43.PNG){width=100%}
+
+# 6. Major Observations
+
+**(1) Male labor force participation rate is higher than female.** Except for age group of 20 to 24, male labor force participation rate is in general higher than female labor force. For the age group of 20 to 24, female labor force participation rate has been higher than male labor force since 2018. Big increase of female labor force participation rate for the early 20's is observed from year 2020 to 2021. 
+
+**(2) Female labor force participation rate has been increasing faster than male since 2010.** Male labor force participation rate between age 25 to 59 has been relatively stable, compared to the increasing trend of female labor force participation rate. The gap of labor force participation rate between male and female has been shrinking since 2010. 
+
+**(3) The highest male labor force participation rate falls in the 30s groups. The highest female labor force participation rate falls in the late 20s. ** The gap of male and female labor force participation rate widens significantly from late 20s to early 30s. This could be because of women's commitments to family after marriage.  
+
+
+**(4) The elderly labor force participation rate for both male and female has been increasing.** This observation is for people who are older than 60. 
+
+**(5) Sharp drop of labor force participation rate for the early 20s happened in 2020.** This could be of the negative impact of the Covid-19 on the employment rate for the graduates.
+
