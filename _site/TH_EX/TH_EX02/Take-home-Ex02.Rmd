@@ -24,22 +24,21 @@ knitr::opts_chunk$set(echo = TRUE,
 ```
 
 
-# Task: The Changes of Singapore Population Pyramid between 2000-2020
 
-## Overview
+# Overview
 
 ***Population Pyramid*** or "age-sex pyramid" is a graphical illustration of the distribution of a population by age groups and sex. Males are usually shown on the left and females on the right, and they may be measured in absolute numbers or as a percentage of the total population. The pyramid can be used to visualize the age of a particular population. It is also used in ecology to determine the overall age distribution of a population; an indication of the reproductive capabilities and likelihood of the continuation of a species ([Wikipedia](https://en.wikipedia.org/wiki/Population_pyramid)).
 
 
-### [The Task](https://isss608-ay2021-22t2.netlify.app/th_ex/th_ex02)
+## [The Task](https://isss608-ay2021-22t2.netlify.app/th_ex/th_ex02)
 
 In this take-home exercise, I am going to design an age-sex pyramid based data visualization to show the changes of demographic structure of Singapore by age cohort and gender between 2000-2020 at planning area level.
 
 For this task, the data sets entitle *Singapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2000-2010* and *Singapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020* are used. These data sets are available at Department of Statistics home page. The data set is available at [Department of Statistics](https://www.singstat.gov.sg/) home page.
 
 
-## Getting Started
-### Installing and loading the required libraries
+# Getting Started
+## Installing and loading the required libraries
 
 The code chunk below is used to check if the necessary R packages are installed in R. If they have yet, then RStudio will install the missing R package(s). If are already been installed, then they will be launch in R environment.
 
@@ -58,7 +57,7 @@ for (p in packages){
 
 ```
 
-## Data Import
+# Data Import
 
 The code chunk below imports respopagesextod2000to2010.csv and respopagesextod2011to2020.csv into R environment by using [**read_csv()**](https://readr.tidyverse.org/reference/read_delim.html) function of **readr** package.
 
@@ -72,8 +71,8 @@ tbl_df(df1)
 tbl_df(df2)
 
 ```
-## Data Wrangling
-### Combining the two data frames
+# Data Wrangling
+## Combining the two data frames
 
 As we can see from above, the two data frames have the same column names. We will firstly combine the two data frames into one by rows using [rbind](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/cbind).
 
@@ -83,7 +82,7 @@ dfcombined <- rbind(df1, df2)
 summary(dfcombined)
 
 ```
-### Change the age group name for sorting
+## Change the age group name for sorting
 
 We need to sort the values alphanumerically by the age group. The following code chunk changes age group “5_to_9” to “05_to_09” to allow for ggplot default labels to arrange the data according to age group. If not, “5_to_9” would be placed among the 50s group data.
 
@@ -98,7 +97,7 @@ dfcombined <- dfcombined %>%
                         TRUE ~ AG) )
 ```
 
-### Change the sign of number of males to negative
+## Change the sign of number of males to negative
 
 
 ```{r}
@@ -108,7 +107,7 @@ dfcombined <- dfcombined %>%
 
 ```
 
-### Select the relevant variables
+## Select the relevant variables
 
 ```{r}
 
@@ -118,7 +117,7 @@ dfcombined_selected <- dfcombined %>%
 ```
 
 
-### Group the population data
+## Group the population data
 
 ```{r}
 
@@ -129,9 +128,9 @@ dfgrouped_selected <- dfcombined_selected %>%
 
 ```
 
-## Chart Plotting
+# Chart Plotting
 
-### Demographic Structure of Singapore 2000-2020 - gganimate
+## Demographic Structure of Singapore 2000-2020 - gganimate
 
 A static plot was firstly created using **ggplot2** bar chart. There are two types of bar charts: [**geom_bar**](https://ggplot2.tidyverse.org/reference/geom_bar.html) and [**geom_col**](https://ggplot2.tidyverse.org/reference/geom_bar.html). **geom_bar()** uses **stat_count()** by default: it counts the number of cases at each x position. **geom_col()** uses stat_identity(): it leaves the data as is. We can also use **geom_bar()** and override the default connection between **geom_bar()** and **stat_count()** by changing "stat" argument to "identity".
 
@@ -164,7 +163,7 @@ ggplot(data=dfgrouped_selected,
 ```
 From above animation, we can see that Singapore population have been aging from 2000 to 2020 for both males and females as the Pyramid center moves higher with time passing by. There are more female elderly than male elderly.
 
-### Demographic Structure of Singapore by Planning Area 2000-2020 - ggplotly
+## Demographic Structure of Singapore by Planning Area 2000-2020 - ggplotly
 
 In this section, we are going to zoom into more details to see how the demographic structure varies by planning area. 
 
@@ -268,7 +267,7 @@ For the plot above, we have below observations:
 
 + "Sengkang" experienced a net growth of population from 2000-2020. There are less aging people in Sengkang compared to the other 5 planning areas. The dominating public there are the middle-age.
 
-### Young and Aged Adults Share by Planning Area - gganimate
+## Young and Aged Adults Share by Planning Area - gganimate
 There are various method to define young and aged adult. For the purpose of this study, we define young adults to be between 20 and 39, based on [Erikson's research](https://www.joincake.com/blog/young-adult-age-range/) and define aged adults to be older than 65 ([Wikipedia](https://en.wikipedia.org/wiki/Old_age)).
 
 + [**Mutate()**](https://dplyr.tidyverse.org/reference/mutate.html) is used to add new variables and preserve existing ones. 
@@ -324,6 +323,6 @@ ggplot(df3, aes(x = Pct_o, y = Pct_y,
 As we can see from above chart, % Aged increased and % Young decreased from 2000 to 2020. The decrease of % Young from 2010 onwards is more obvious, compared to that from 2000 to 2009.
 
 
-## Conclusion
+# Conclusion
 Singapore is an aging population for both males and females. There are more female elderly than male elderly. Mature residential areas are representative of overall Singapore demographics changes over time. Recently developed planning areas, for example Punggol and Sengkang, have more young and middle-aged population than the matured planning areas.
 

@@ -154,7 +154,7 @@ No.|Step                                                |Action
 **(3) The highest male labor force participation rate falls in the 30s groups. The highest female labor force participation rate falls in the late 20s. ** The gap of male and female labor force participation rate widens significantly from late 20s to early 30s. This could be because of women's commitments to family after marriage.  
 
 
-**(4) The elderly labor force participation rate for both male and female has been increasing.** This observation is for people who are older than 60. 
+**(4) The elderly labor force participation rate for both male and female has been increasing.** This observation is for people who are older than 60. This could be because of the better health condition of the elderly and the general trend of increasing retirement age.
 
 **(5) Sharp drop of labor force participation rate for the early 20s happened in 2020.** This could be of the negative impact of the Covid-19 on the employment rate for the graduates.
 
