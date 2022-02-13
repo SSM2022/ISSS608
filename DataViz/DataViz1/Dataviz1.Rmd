@@ -156,5 +156,5 @@ No.|Step                                                |Action
 
 **(4) The elderly labor force participation rate for both male and female has been increasing.** This observation is for people who are older than 60. This could be because of the better health condition of the elderly and the general trend of increasing retirement age.
 
-**(5) Sharp drop of labor force participation rate for the early 20s happened in 2020.** This could be of the negative impact of the Covid-19 on the employment rate for the graduates.
+**(5) Sharp drop of labor force participation rate for the early 20s happened in 2020.** The drop of rate in 2020 for age group 20 to 24 doesn't happen to other age groups with similar extent. This could be because of the negative impact of the Covid-19 on the new positions for the fresh graduates. For those who have stable jobs already, the impact of covid-19 is smaller. 
 
