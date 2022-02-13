@@ -1,6 +1,6 @@
 ---
 title: "DataViz Makeover 1"
-description: In this post, we will criticize one original visualisation regarding Singapore labour force participation rate and propose an alternative to address the flaws.
+description: In this blog, we will criticize one original visualisation regarding Singapore labour force participation rate and propose an alternative to address the flaws.
 author:
   - name: Sun Shengmei
     url: https://www.linkedin.com/in/shengmei-sun-9b262656/?originalSubdomain=sg
@@ -65,7 +65,7 @@ The data source of above visualization is Ministry of Manpower, Singapore (MOM).
 # 3. Proposed Design
 
 The initial sketch of proposed design is as follow:
-![](data/0.PNG){width=100%}
+![](data/0.PNG)
 
 ## 3.1 Clarity
 
