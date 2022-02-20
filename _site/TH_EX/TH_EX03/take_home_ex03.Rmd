@@ -97,14 +97,14 @@ size <- df %>%
 
 size
 ```  
-As seen below, there are 7 named types of size. For large number of data, we will use "Grande" size in this study.
+As seen above, there are 7 named types of size. For large number of data, we will use "Grande" size in this study.
 
 ```{r}
 df <- df %>%
    filter(Size == 'Grande')
 ```
 
-Next, we need to group the data by category, since there are many different drinks for each category. Some of the drinks names are the same. **mean** is used to summarize all the data.
+Next, we need to group the data by category, since there are many different drinks for each category.  **Mean()** is used to summarize all the data.
 
 ```{r}
 df1 <- df[, c(1,4:15)] %>%
@@ -183,7 +183,7 @@ With reference to the statistical analysis results, we prepare the code chunk as
 + **colv** is set to NA to remove the dendrogram among the columns
 + the default **seriate** option “OLO” (Optimal leaf ordering) is used to find an optimal ordering of rows and columns.
 + **margins** is used to change the top margin to 60 and row margin to 200.
-+ **fontsizw_row*8 and **fontsize_col** are used to change the font size for row and column labels to 8.
++ **fontsizw_row** and **fontsize_col** are used to change the font size for row and column labels to 8.
 + **main** is used to write the main title of the plot.
 + **xlab** and **ylab** are used to write the x-axis and y-axis labels respectively.
 
@@ -248,7 +248,7 @@ kids_clust <- hclust(Kids_d, method = "mcquitty")
 num_k <- find_k(kids_clust)
 plot(num_k)
 ```
-Figure above shows that k=10 would be good.To avoid big number of clusters, next best number of clusters is 8.
+Figure above shows that k=10 would be good. To avoid big number of clusters and too granular grouping, next best number of clusters 8 is chosen.
 
 With reference to the statistical analysis results, we prepare the code chunk as shown below.
 
@@ -269,7 +269,7 @@ heatmaply(percentize(Kids_drinks_matrix[, c(4:15)]),
 ```
 
 ### 3.5.2 Interactive Parallel Coordinates - parallelPlot()
-parallelPlot is an R package specially designed to plot a parallel coordinates plot by using ‘htmlwidgets’ package and d3.js. In order to visualize different clusters, we need to add in the cluster numbers in the dataset.
+**parallelPlot** is an R package specially designed to plot a parallel coordinates plot by using ‘htmlwidgets’ package and d3.js. In order to visualize the different clusters, we need to add in the cluster numbers in the dataset.
 
 ```{r}
 kids_drinks_clust <- kids_drinks[, c(19,4:15)] 
@@ -280,7 +280,7 @@ clust_num <- data.frame(cutree(kids_clust, k=8, order_clusters_as_data=FALSE)) %
 
 ```
 
-We need then to join above cluster no. data set with *kids_drinks_clust* data set by "Drinks"
+We need then to join above cluster No. data set with *kids_drinks_clust* data set by column "Drinks"
 
 ```{r}
 kids_drinks_clust <- left_join(kids_drinks_clust, clust_num)
@@ -303,6 +303,7 @@ parallelPlot(kids_drinks_clust,
 From section 3.4, we can see that kids-drinks-and-other are in the same cluster as cappuccino-blended-beverages and espresso. Kids drink have the highest calories, calories from fat, total fat, saturated fat, trans fat, dietary fiber, and protein among all the drink categories. The only nutrition that kids drinks have less is caffeine, compared to other drinks categories.
 
 From section 3.5, we have below observations:
+
 + Hot chocolate drinks generally have more caffine.
 + Drinks with milk have more protein
 + Drinks with salted caramel, hot chocolate, milk and whipped cream all together have higher calories. 
@@ -311,11 +312,11 @@ From section 3.5, we have below observations:
 # 5.0 Comparison of Heatmaps and Parallel Coordinates Plot
 From section 3.4, both heatmap and parallel plot gave the same result that kids drinks, cappuccino-blended-beverages and espresso belong to the same cluster, which have the higher nutrition indicator values, compared to the other cluster. 
 
-The advantage of heatmap over parallel plot is that it is easier to read. Each observation is clearly identifiable with unique name.
+The advantage of heatmap over parallel plot is that it is easier to read. Each observation is clearly labelled and identifiable with unique name.
 
 The disadvantage of heatmap compared to parallel plot is that the data preparation process is more tedious. Matrix format data is required. Each observation need to have the unique name. 
 
-Interactive parallel plot allows readers to interact with the data, to select and to highlight. However, with large number of observations, the plot becomes messy and difficult to understand. 
+Interactive parallel plot allows readers to interact with the data, to select and to highlight the data. However, with large number of observations, the plot becomes messy and difficult to understand. 
 
 Overall, heatmap is the best solution for this analysis.
 
