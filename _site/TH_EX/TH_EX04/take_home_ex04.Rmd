@@ -1,0 +1,301 @@
+---
+title: "Take-home Exercise 3"
+description: |
+  Reveal the impact of COVID-19 on the stock prices of top 40 companies in Singapore by market capitalisation.
+author:
+  - name: Sun Shengmei
+    url: https://www.linkedin.com/in/shengmei-sun-9b262656/?originalSubdomain=sg
+    affiliation: SMU MITB
+    affiliation_url: https://scis.smu.edu.sg/master-it-business
+date: "`r Sys.Date()`"
+output:
+   distill::distill_article:
+    toc: true
+    toc_depth: 3
+---
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.retina = 3)
+
+```
+
+# The Task
+
+1. Script stock prices of top 40 companies in Singapore by market capitalization between 1st January 2020 - 31st December 2021 by using tidyquant R package.
+
+2. Using either calender heatmap or horizon graph, prepare a data visualization showing the historical stock prices by the [top 40 companies in Singapore by market capitalization](https://companiesmarketcap.com/singapore/largest-companies-in-singapore-by-market-cap/).
+
+
+# Installing and Loading the Required Libraries
+
+The code chunk below is to install the packages needed. 
+
++ [**tidyquant**](https://business-science.github.io/tidyquant/index.html) is to get quantitative data in tibble format.
++ [**tidyverse**](https://www.tidyverse.org/l) is to clean data.
++ [**ggHoriPlot**](https://rivasiker.github.io/ggHoriPlot/index.html) is to build horizon plots in ggplot2.
++ [**ggTimeSeries**](https://cran.r-project.org/web/packages/ggTimeSeries/index.html) is to build time series visualizations Using the [**Grammar of Graphics**](https://cfss.uchicago.edu/notes/grammar-of-graphics/).
++ [**kableExtra**](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) to create cleaner looking tables for display.
+
+```{r}
+packages = c('tidyquant', 'tidyverse', 'ggHoriPlot', 'ggTimeSeries', 'kableExtra', 'ggthemes', 'plotly')
+
+for(p in packages){library
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p, character.only = T)
+}
+```
+
+# Data Scraping
+
+The symbols of the [top 40 companies in Singapore by market capitalization](https://companiesmarketcap.com/singapore/largest-companies-in-singapore-by-market-cap/) was downloaded as *companiesmarketcap.com - Largest companies in Singapore by market capitalization.cs*. This csv data was imported using below code.
+
++ [**read_csv()**](https://readr.tidyverse.org/reference/read_delim.html) is a function of **readr** package to import csv file.
+
+```{r}
+symbol_table <- read_csv("data/companiesmarketcap.com - Largest companies in Singapore by market capitalization.csv") %>%
+  rename(symbol = Symbol)
+```
+Below code chunk is to script the stocks data from Yahoo Finance.
+
++ [**tq_get()**](https://business-science.github.io/tidyquant/reference/tq_get.html) is a one-stop shop for getting web-based financial data in a “tidy” data frame format. Get data for daily stock prices (historical), key statistics (real-time), key ratios (historical), financial statements, dividends, splits, economic data from the FRED, FOREX rates from Oanda.
++ [**tq_mutate()**](https://business-science.github.io/tidyquant/reference/tq_mutate.html) is used to add a column to the data frame.
++ [**tq_transmute()**](https://business-science.github.io/tidyquant/reference/tq_mutate.html) is used to return a new data frame which is necessary for periodicity changes.
++ [**tq_performance()**](https://business-science.github.io/tidyquant/reference/tq_performance.html) converts investment returns into performance metrics.
++ [**tq_portfolio()**](https://business-science.github.io/tidyquant/reference/tq_portfolio.html) aggregates a group (or multiple groups) of asset returns into one or more portfolios.
+
+```{r}
+from_date = "2020-01-01"
+to_date = "2021-12-01"
+
+stock_selected = c(symbol_table$symbol[1:40]) 
+
+Top40_Name = c(symbol_table$Name[1:40]) 
+
+stock_data_daily = tq_get(stock_selected,
+               get = "stock.prices",
+               from = from_date,
+               to = to_date)
+
+kable(head(stock_data_daily)) %>%
+   kable_styling()
+```
+Let's now join 'stock_data_daily' with 'symbol' to include the company name in the data tibble.
+
+```{r}
+stock_data_daily1 <- stock_data_daily %>%
+  left_join(symbol_table,
+            by = "symbol")
+```
+
+Next, we want to order the stock in descending order by the market capitalization value using [**order()**](https://www.datacamp.com/community/tutorials/sorting-in-r). 
+
+```{r}
+stock_data_daily1 <- stock_data_daily1[order(-stock_data_daily1$marketcap),]
+```
+
+Alternative method is as below:
+
++ [**mutate()**](https://dplyr.tidyverse.org/reference/mutate.html) adds new variables and preserves existing ones.
++ [**factor()**](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/factor) is used to encode a vector as a factor (the terms ‘category’ and ‘enumerated type’ are also used for factors). If argument ordered is TRUE, the factor levels are assumed to be ordered. 
++ [**arrange()**](https://dplyr.tidyverse.org/reference/arrange.html) is to arrange rows by column values.
+
+```{r}
+stock_data_daily1 <- stock_data_daily1 %>%
+  mutate(Name =  factor(Name, levels = Top40_Name)) %>%
+  arrange(Name)
+
+kable(head(stock_data_daily1)) %>%
+     kable_styling()
+```
+
+
+Now, our dataset 'stock_data_daily1' is ready for visualization.
+
+# Data Visualization
+
+## Calender Heatmap
+
+A calendar heatmap is a great way to visualise daily data. Its structure makes it easy to detect weekly, monthly, or seasonal patterns.
+
+We firstly create a function to make a calendar heatmap and set *Name* as the variable, so that we don't need to repeat the steps when plotting for all the 40 companies. Later, we will loop through all the values in *Name* column to create the corresponding plots.
+
++ Plot title is set according to the company name. Unit is added after the company name.
++ Low value is set to use red color and high value to use green color
++ Theme is customized using **theme()** function: all the text are bold. Gridlines are grey. Background has no fill. Border is black.
+
+```{r}
+calendar_heatmap <- function(df, var) {
+ggplot_calendar_heatmap(
+   df %>% filter(Name ==var),
+   'date',
+   'close',   
+   dayBorderSize = 0.25, 
+   dayBorderColour = "black",
+   monthBorderSize = 1, 
+   monthBorderColour = "black",
+   monthBorderLineEnd = "round") +
+    xlab('') + 
+    ylab('') + 
+    labs(title = paste(var, "Stock Close Price (SGD/share)"))+
+    scale_fill_continuous(low = "red", high = "green")+ 
+    theme(plot.title = element_text(size = rel(1), hjust=0.5, face = "bold"),
+          panel.background = element_rect(fill = NA),
+          panel.grid.major = element_line(colour = "grey90"),
+          panel.border = element_rect(linetype = "solid", fill = NA),
+          strip.background = element_rect(colour = "black"),
+          strip.text.x = element_text(colour = "black", size = rel(1), face = "bold"),
+          legend.title = element_text(face = "bold"),
+          axis.text = element_text(colour = "black", size = rel(0.8), face = "bold"))
+
+
+}
+```
+
+Next, we loop through *Name* var, create plots and store them in a list using **purrr::map()**. Then, we display all plots with **purrr::walk()**.
+
++ The map functions transform their input by applying a function to each element of a list or atomic vector and returning an object of the same length as the input.
+
+```{r, fig.height=2, fig.width = 13}
+plot_list <- unique(stock_data_daily1$Name) %>% 
+  purrr::set_names() %>% 
+  purrr::map( ~ calendar_heatmap(stock_data_daily1, .x))
+purrr::walk(plot_list, print)
+```
+Below is to explore if above calendar heatmap works with **ggplotly()** to make it interactive. We can see that this interactive plot works.
+
+```{r, fig.height = 2, fig.width = 10}
+
+p <- ggplot_calendar_heatmap(
+   stock_data_daily1 %>% filter(Name == 'DBS'),
+   'date',
+   'close',   
+   dayBorderSize = 0.25, 
+   dayBorderColour = "black",
+   monthBorderSize = 1, 
+   monthBorderColour = "black",
+   monthBorderLineEnd = "round") +
+    xlab('') + 
+    ylab('') + 
+    labs(title = paste('DBS', "Stock Close Price (SGD/share)"))+
+    scale_fill_continuous(low = "red", high = "green")+ 
+    theme(plot.title = element_text(size = 8, hjust=0.5, face = "bold"),
+          panel.background = element_rect(fill = NA),
+          panel.grid.major = element_line(colour = "grey90"),
+          panel.border = element_rect(linetype = "solid", fill = NA),
+          strip.background = element_rect(colour = "black"),
+          strip.text.x = element_text(colour = "black", size = 8, face = "bold"),
+          legend.title = element_text(face = "bold"),
+          axis.text = element_text(colour = "black", size = 8, face = "bold"))
+
+
+ggplotly(p, height = 250, width=900)
+```
+
+
+## Horizon Graph
+
+Horizon Graph compact the area chart by slicing it horizontally, and then then shifting the slices to baseline zero. It’s like a combo area chart and heatmap. The figure below shows a horizon plot using the [**ggHoriplot**](https://rivasiker.github.io/ggHoriPlot/index.html) package. 
+
++ Origin is set at mean value. 
++ Horizon scale is set at 6, which means cut the area chart into 6 pieces.
++ Color palette chose is 'RdBu'. Red color means values below mean value. Blue color means values above mean value.
++ Theme is customized using **theme()** function for better visualization.
++ X axis label is adjusted to show both the month and the year.
++ Title and subtitle are added for explanation.
+
+```{r, fig.height= 8, fig.width = 10}
+ggplot() +
+  geom_horizon(aes(date, close),
+               data = stock_data_daily1,
+               origin = 'mean',
+               horizonscale = 6) +
+  scale_fill_hcl(palette = 'RdBu') +  
+  facet_grid(Name~.)+
+   theme_few() +
+   theme(panel.spacing.y=unit(0, "lines"),
+    plot.title = element_text(size=13, face = "bold"),
+    plot.subtitle = element_text(size=9, face = "bold"),
+    strip.text.y = element_text(size = 9, angle = 0, hjust = 0, face = "bold"),
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(size=9, angle = 90, face = "bold"),
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.border = element_blank(),
+    legend.position="none") +
+   scale_x_date(expand=c(0,0), 
+               date_breaks = "1 month", 
+               date_labels = "%b-%y",
+               limit=c(as.Date("2020-01-01"),as.Date("2021-12-31"))) +
+  ggtitle('Daily Stock Price of Top 40 Companies in Singapore (SGD/share), 2020 to 2021',
+          'Ranked by Market Capitalisation')
+
+```
+
+
+Below is to explore if above horizon graph works with **ggplotly()** wrapper to make it interactive. 
+
+```{r}
+H <- ggplot() +
+
+  geom_horizon(aes(date, close),
+               data = stock_data_daily1,
+               origin = 'mean',
+               horizonscale = 6) +
+  scale_fill_hcl(palette = 'RdBu') +  
+  facet_grid(Name~.)+
+   theme_few() +
+   theme(panel.spacing.y=unit(0, "lines"),
+    plot.title = element_text(size=13, face = "bold"),
+    plot.subtitle = element_text(size=9, face = "bold"),
+    strip.text.y = element_text(size = 9, angle = 0, hjust = 0, face = "bold"),
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(size=9, angle = 90, face = "bold"),
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.border = element_blank(),
+    legend.position="none") +
+   scale_x_date(expand=c(0,0), 
+               date_breaks = "1 month", 
+               date_labels = "%b-%y",
+               limit=c(as.Date("2020-01-01"),as.Date("2021-12-31"))) +
+  ggtitle('Daily Stock Price of Top 40 Companies in Singapore (SGD/share), 2020 to 2021',
+          'Ranked by Market Capitalisation') 
+
+
+ggplotly(H)
+
+```
+We can see that this interactive plot doesn't work. Only x and y axis and title are displayed. 
+
+# Conclusions
+
++ In general, most stock prices performed better in 2021 than 2020. 
++ There is a clear stock price drop in Feb/Mar 2020 when Covid-19 started to spread in Singapore.
++ Sea (Garena) stock price has been steadily increasing since Jan 2020, which seems to be not impacted by Covid-19.
++ Travel, hotel, shopping, real estate, construction and transportation industries haven't yet recovered to the level of before Covid-19. Some of these companies are Singapore Airlines, CapitaLand Mall, Genting Singapore, Jardine singapore, Suntect, SATS and ComfortDelGro, City Development, United Industrial, ST Engineering, Keppel, Sembcorp and so on. 
++ Banking industry fully recovered from Covid-19 impact and stock price increased yoy. Examples are DBS, OCBC, and UOB.
++ Trust companies stock price only suffered mildly from Covid-19. Netlink Trust and Mapletree Logistics Trust are the good performers. 
+
+# Comparision between Calendar Heatmap and Horizon Graph
+
++ Calendar heatmap shows more details in terms of the weekly cycle than the horizon graph. 
++ Calendar heatmap can show the stock price in terms of the actual values. Horizon graph shows the deviation from origin or a benchmark value. The darker the color is, the bigger the deviation is.
++ When comparing the differences across many different companies, horizon graph is the better choice because it can accommodate all the data into a single compact graph. Whereas, multiple calendar heatmaps are needed in order to visualize all the 40 companies. **facet_wrap()** and **facet_grid()** allow multiple subplots in a single plot. However, 40 subplots into one plot are difficult to read. 
++ **ggplot_calendar_heatmap()** works with **ggplotly()** wrapper to become interactive. **geom_horizon()** doesn't work with **ggplotly()** wrapper. 
+
+# Reference
+
+[Using R to Scrape Financial Dataset](https://giniceseah.netlify.app/posts/2021-06-18-scraping-of-financial-dataset/#tidyquant-package)
+
+[Plotting multiple graphs in R ](https://stackoverflow.com/questions/52902383/plotting-multiple-graphs-in-r)
+
+[ggHoriPlot: build horizon plots in ggplot2](https://rivasiker.github.io/ggHoriPlot/index.html)
+
