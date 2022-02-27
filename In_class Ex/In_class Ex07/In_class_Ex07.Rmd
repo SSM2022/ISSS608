@@ -1,0 +1,322 @@
+---
+title: "Untitled"
+description: |
+  A new article created using the Distill format.
+author:
+  - name: Nora Jones 
+    url: https://example.com/norajones
+    affiliation: Spacely Sprockets
+    affiliation_url: https://example.com/spacelysprokets
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Distill is a publication format for scientific and technical writing, native to the web. 
+
+Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+
+
+
+```{r}
+
+packages = c('tmap', 'sf', 'readr',
+             'readxl', 'knitr',
+             'data.table', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+
+```
+
+```{r}
+sgpools <- read_csv("data/SGPools_svy21.csv")
+```
+
+
+
+```{r}
+sgpools_sf <- st_as_sf(
+  sgpools, 
+  coords = c("XCOORD",
+             "YCOORD"),
+             crs= 3414)
+```
+
+tm_shape defines the extent of the outter layer
+border.lwd:line size
+```{r}
+tmap_mode("view")
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "red",
+           size = 1,
+           border.col = "black",
+           border.lwd = 1)
+```
+
+
+```{r}
+tmap_mode("view")
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "red",
+           size = 1,
+           border.col = "black",
+           border.lwd = 1)
+```
+
+
+
+
+```{r}
+tm_shape(sgpools_sf)+
+tm_bubbles(col = "OUTLET TYPE",
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 0.5)
+```
+
+
+```{r}
+tm_shape(sgpools_sf) +
+  tm_bubbles(col = "OUTLET TYPE", 
+          size = "Gp1Gp2 Winnings",
+          border.col = "black",
+          border.lwd = 1) +
+  tm_facets(by= "OUTLET TYPE",
+            nrow = 1,
+            sync = TRUE)
+```
+```{r}
+mpsz <- st_read(dsn = "data/geospatial", 
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+
+
+```{r}
+popagsex <- read_csv("data/respopagsex2000to2018.csv")
+```
+spread ==> pivot_wide;
+`0_to_4`+`5_to_9`+`10_to_14`+`15_to_19`+`20_to_24` ==> rowsums(.[5:9])
+
+```{r}
+popagsex2018_male <- popagsex %>%
+  filter(Sex == "Males") %>%
+  filter(Time == 2018) %>%
+  pivot_wider(names_from = AG, values_from = Pop) %>%
+  mutate(YOUNG = `0_to_4`+`5_to_9`+`10_to_14`+
+`15_to_19`+`20_to_24`) %>%
+mutate(`ECONOMY ACTIVE` = rowSums(.[9:13])+
+rowSums(.[15:17]))%>%
+mutate(`AGED`=rowSums(.[18:22])) %>%
+mutate(`TOTAL`=rowSums(.[5:22])) %>%  
+mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)
+/`ECONOMY ACTIVE`) %>%
+mutate_at(.vars = vars(PA, SZ), 
+          .funs = funs(toupper)) %>%
+  select(`PA`, `SZ`, `YOUNG`, 
+         `ECONOMY ACTIVE`, `AGED`, 
+         `TOTAL`, `DEPENDENCY`) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+```
+
+
+```{r}
+mpsz_agemale2018 <- left_join(mpsz,
+                              popagsex2018_male,
+                              by = c("SUBZONE_N" = "SZ"))
+```
+
+
+```{r}
+tmap_mode("plot")
+qtm(mpsz_agemale2018, 
+    fill = "DEPENDENCY")
+```
+```{r}
+tm_shape(mpsz_agemale2018) +
+  tm_polygons()
+```
+
+```{r}
+tm_polygons("DEPENDENCY")
+```
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY")
+```
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY") +
+  tm_borders(lwd = 0.1,
+             alpha = 1)
+```
+
+
+style = "quantile" clustering by quantile, or clustering, etc. n=8 ==> 8 bins
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY",
+          n = 8,
+          style = "quantile") +
+  tm_borders(alpha = 0.5)
+```
+style = "equal"
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY",
+          n = 8,
+          style = "equal") +
+  tm_borders(alpha = 0.5)
+```
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY",
+          n = 6,
+          style = "quantile",
+          palette = "Blues") +
+  tm_borders(alpha = 0.5)
+```
+To reverse the colour shading, add a "-" prefix.
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "-Blues") +
+  tm_borders(alpha = 0.5)
+```
+
+Map Layouts
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 0.1) +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone \n(Quantile classification)",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.height = 0.45,
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+```
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("classic")
+```
+
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("white")
+```
+
+
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "No. of persons") +
+  tm_layout(main.title = "Distribution of Dependency Ratio \nby planning subzone",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS",
+             position = c("left", "bottom"))+
+  tmap_style("white")
+```
+
+```{r}
+tm_shape(mpsz_agemale2018)+
+  tm_fill(c("YOUNG", "AGED"),
+          style = "equal", 
+          palette = "Blues") +
+  tm_layout(legend.position = c("right",
+                                "bottom")) +
+  tm_borders(alpha = 0.5) +
+  tmap_style("white")
+```
+free.coords=TRUE to have different shape form different regions individually 
+drop.shapes=TRUE neighbouring regions to have blank shape
+
+```{r}
+tm_shape(mpsz_agemale2018) +
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "Blues",
+          thres.poly = 0) + 
+  tm_facets(by="REGION_N",
+            free.coords=TRUE,
+            drop.shapes=TRUE) +
+  tm_layout(legend.show = FALSE,
+            title.position = c("center",
+                               "center"), 
+            title.size = 20) +
+  tm_borders(alpha = 0.5)
+```
+```{r}
+youngmap <- tm_shape(mpsz_agemale2018)+ 
+  tm_polygons("YOUNG", 
+              style = "quantile", 
+              palette = "Blues")
+agedmap <- tm_shape(mpsz_agemale2018)+ 
+  tm_polygons("AGED", 
+              style = "quantile", 
+              palette = "Blues")
+tmap_arrange(youngmap,
+             agedmap,
+             asp=1,
+             ncol=2)
+```
+
+```{r}
+tm_shape(mpsz_agemale2018[mpsz_agemale2018$REGION_N=="CENTRAL REGION", ]) +
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 0.1) +
+  tm_layout(legend.outside = TRUE,
+            legend.height = 0.45, 
+            legend.width = 5.0,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+```
