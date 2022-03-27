@@ -30,7 +30,9 @@ The task is to criticize the original data visualization in below Figure 1., sug
 ![Figure 1. Original Data Visualisation](data/Original_chart.PNG)
 
 The data source of above visualization is as below:
+
 + "origin_destination_bus_SZ_202201.csv", this data set was downloaded from LTA Datamall and URA region, planning area and planning subzone information were added by using GIS Overlay operation.
+
 + "MP14_SUBZONE_WEB_PL", this data provides URA Master Plan 2014 Planning Subzone boundary map in ESRI shape file format. It was downloaded from data.gov.sg.
 
 # 2. Critique of Visualisation
@@ -170,16 +172,23 @@ No.|Step                                                |Action
 # 6. Major Observations
 
 **(1) Jurong West Central, Bedok North and Tampines East are the top 3 origins in both weekday and weekend. Majority of the bus trips flow from these 3 origins is within the same region.** 
+
 + The top destinations of Jurong West Central is Jurong West Central, which is 25.86%. Yunnan accounts for another 28.1%.
-+ The top destinations of Bedok North is Bedok North, which is 43.78%..
+
++ The top destinations of Bedok North is Bedok North, which is 43.78%.
+
 + The top destinations of Tampines East is Tampines East, which is 44.24%.
 
 **(2) Some bus trips travel far to other subzones.** Even though most bus trips are within nearby regions, some long-distance bus trip travel is also observed. 
-+ From Woodlands, there are bus trips to Tampines East and Bedok observed. 
-+ From Maritime square, there are bus trips to Woodlands observed.
-+ From Chahgi Point, there are bus trips to Chinatown oberved.
 
-**(3) Peak travel hour during weekday is 6-8am and 5-7pm. No similar pattern observed during weekend** 
++ From Woodlands, there are bus trips to Tampines East and Bedok observed. 
+
++ From Maritime square, there are bus trips to Woodlands observed.
+
++ From Changi Point, there are bus trips to Chinatown oberved.
+
+
+**(3) Peak travel hour during weekday is 6-8am and 5-7pm. No similar pattern is observed during weekend** 
 
 
 
