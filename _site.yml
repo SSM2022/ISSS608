@@ -20,14 +20,10 @@ navbar:
           href: "TH_Ex/TH_EX03/take_home_ex03.html"
         - text: "Take-home Exercise 4"
           href: "TH_Ex/TH_EX04/take_home_ex04.html"
-        - text: "Take-home Exercise 5"
-          href: "TH_Ex/TH_EX05/Take-home-Ex05.html"
     - text: "DataViz Makeover"
       menu:
         - text: "DataViz Makeover 1"
           href: "DataViz/DataViz1/DataViz1.html"   
         - text: "DataViz Makeover 2"
           href: "DataViz/DataViz2/DataViz2.html"  
-    - text: "Visual Analytics Project"
-      href: "Visualanalyticsproject.html"
 output: distill::distill_article
